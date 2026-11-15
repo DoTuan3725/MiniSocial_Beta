@@ -1,0 +1,8 @@
+"""Môi trường phát triển cục bộ (docker-compose.yml)."""
+
+from .base import *  # noqa: F401,F403
+from .base import env_bool
+
+DEBUG = env_bool("DEBUG", True)
+ALLOWED_HOSTS = ["*"]
+REFRESH_COOKIE_SECURE = False

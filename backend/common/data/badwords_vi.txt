@@ -1,0 +1,31 @@
+# Danh sách từ ngữ thô tục tiếng Việt (mỗi dòng 1 cụm). Nhóm tự bổ sung.
+# So khớp theo ranh giới từ, không phân biệt hoa thường. Dòng bắt đầu bằng # là chú thích.
+# Lưu ý: KHÔNG bỏ dấu khi so khớp để tránh bắt nhầm (ví dụ "các" và từ thô tục cùng dạng không dấu).
+đm
+đmm
+dm
+dmm
+đcm
+dcm
+đkm
+vcl
+vkl
+vl
+clgt
+cmm
+địt
+đụ
+đéo
+đếch
+lồn
+cặc
+buồi
+đĩ
+óc chó
+mặt lồn
+thằng chó
+con chó
+đồ chó
+chó chết
+ngu như chó
+súc vật

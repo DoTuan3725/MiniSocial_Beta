@@ -1,0 +1,245 @@
+; Bảo vệ kiến trúc Modular Monolith (chạy trong CI: lint-imports)
+; 1) Phân tầng phụ thuộc một chiều, các phân hệ cùng tầng độc lập nhau -> không có phụ thuộc vòng.
+; 2) Không phân hệ nào được import models / views / serializers của phân hệ khác:
+;    chỉ được gọi qua services.py (Service Interface) hoặc Event Bus (common.events).
+
+[importlinter]
+root_packages =
+    apps
+    common
+    config
+include_external_packages = False
+
+[importlinter:contract:layers]
+name = Phân tầng phân hệ (không phụ thuộc vòng)
+type = layers
+containers = apps
+layers =
+    admin_management
+    posts | chat | notifications
+    groups | media_files
+    users
+    authentication
+
+[importlinter:contract:common-independent]
+name = Lớp nền tảng common không phụ thuộc phân hệ nghiệp vụ
+type = forbidden
+source_modules = common
+forbidden_modules = apps
+
+[importlinter:contract:no-cross-authentication]
+name = authentication: chỉ gọi phân hệ khác qua services.py
+type = forbidden
+source_modules = apps.authentication
+forbidden_modules =
+    apps.users.models
+    apps.users.views
+    apps.users.serializers
+    apps.users.listeners
+    apps.posts.models
+    apps.posts.views
+    apps.posts.listeners
+    apps.media_files.models
+    apps.media_files.views
+    apps.chat.models
+    apps.chat.views
+    apps.chat.consumers
+    apps.notifications.models
+    apps.notifications.views
+    apps.notifications.listeners
+    apps.groups.models
+    apps.groups.views
+    apps.admin_management.models
+    apps.admin_management.views
+    apps.admin_management.listeners
+allow_indirect_imports = True
+
+[importlinter:contract:no-cross-users]
+name = users: chỉ gọi phân hệ khác qua services.py
+type = forbidden
+source_modules = apps.users
+forbidden_modules =
+    apps.authentication.models
+    apps.authentication.views
+    apps.authentication.serializers
+    apps.posts.models
+    apps.posts.views
+    apps.posts.listeners
+    apps.media_files.models
+    apps.media_files.views
+    apps.chat.models
+    apps.chat.views
+    apps.chat.consumers
+    apps.notifications.models
+    apps.notifications.views
+    apps.notifications.listeners
+    apps.groups.models
+    apps.groups.views
+    apps.admin_management.models
+    apps.admin_management.views
+    apps.admin_management.listeners
+allow_indirect_imports = True
+
+[importlinter:contract:no-cross-posts]
+name = posts: chỉ gọi phân hệ khác qua services.py
+type = forbidden
+source_modules = apps.posts
+forbidden_modules =
+    apps.authentication.models
+    apps.authentication.views
+    apps.authentication.serializers
+    apps.users.models
+    apps.users.views
+    apps.users.serializers
+    apps.users.listeners
+    apps.media_files.models
+    apps.media_files.views
+    apps.chat.models
+    apps.chat.views
+    apps.chat.consumers
+    apps.notifications.models
+    apps.notifications.views
+    apps.notifications.listeners
+    apps.groups.models
+    apps.groups.views
+    apps.admin_management.models
+    apps.admin_management.views
+    apps.admin_management.listeners
+allow_indirect_imports = True
+
+[importlinter:contract:no-cross-media_files]
+name = media_files: chỉ gọi phân hệ khác qua services.py
+type = forbidden
+source_modules = apps.media_files
+forbidden_modules =
+    apps.authentication.models
+    apps.authentication.views
+    apps.authentication.serializers
+    apps.users.models
+    apps.users.views
+    apps.users.serializers
+    apps.users.listeners
+    apps.posts.models
+    apps.posts.views
+    apps.posts.listeners
+    apps.chat.models
+    apps.chat.views
+    apps.chat.consumers
+    apps.notifications.models
+    apps.notifications.views
+    apps.notifications.listeners
+    apps.groups.models
+    apps.groups.views
+    apps.admin_management.models
+    apps.admin_management.views
+    apps.admin_management.listeners
+allow_indirect_imports = True
+
+[importlinter:contract:no-cross-chat]
+name = chat: chỉ gọi phân hệ khác qua services.py
+type = forbidden
+source_modules = apps.chat
+forbidden_modules =
+    apps.authentication.models
+    apps.authentication.views
+    apps.authentication.serializers
+    apps.users.models
+    apps.users.views
+    apps.users.serializers
+    apps.users.listeners
+    apps.posts.models
+    apps.posts.views
+    apps.posts.listeners
+    apps.media_files.models
+    apps.media_files.views
+    apps.notifications.models
+    apps.notifications.views
+    apps.notifications.listeners
+    apps.groups.models
+    apps.groups.views
+    apps.admin_management.models
+    apps.admin_management.views
+    apps.admin_management.listeners
+allow_indirect_imports = True
+
+[importlinter:contract:no-cross-notifications]
+name = notifications: chỉ gọi phân hệ khác qua services.py
+type = forbidden
+source_modules = apps.notifications
+forbidden_modules =
+    apps.authentication.models
+    apps.authentication.views
+    apps.authentication.serializers
+    apps.users.models
+    apps.users.views
+    apps.users.serializers
+    apps.users.listeners
+    apps.posts.models
+    apps.posts.views
+    apps.posts.listeners
+    apps.media_files.models
+    apps.media_files.views
+    apps.chat.models
+    apps.chat.views
+    apps.chat.consumers
+    apps.groups.models
+    apps.groups.views
+    apps.admin_management.models
+    apps.admin_management.views
+    apps.admin_management.listeners
+allow_indirect_imports = True
+
+[importlinter:contract:no-cross-groups]
+name = groups: chỉ gọi phân hệ khác qua services.py
+type = forbidden
+source_modules = apps.groups
+forbidden_modules =
+    apps.authentication.models
+    apps.authentication.views
+    apps.authentication.serializers
+    apps.users.models
+    apps.users.views
+    apps.users.serializers
+    apps.users.listeners
+    apps.posts.models
+    apps.posts.views
+    apps.posts.listeners
+    apps.media_files.models
+    apps.media_files.views
+    apps.chat.models
+    apps.chat.views
+    apps.chat.consumers
+    apps.notifications.models
+    apps.notifications.views
+    apps.notifications.listeners
+    apps.admin_management.models
+    apps.admin_management.views
+    apps.admin_management.listeners
+allow_indirect_imports = True
+
+[importlinter:contract:no-cross-admin_management]
+name = admin_management: chỉ gọi phân hệ khác qua services.py
+type = forbidden
+source_modules = apps.admin_management
+forbidden_modules =
+    apps.authentication.models
+    apps.authentication.views
+    apps.authentication.serializers
+    apps.users.models
+    apps.users.views
+    apps.users.serializers
+    apps.users.listeners
+    apps.posts.models
+    apps.posts.views
+    apps.posts.listeners
+    apps.media_files.models
+    apps.media_files.views
+    apps.chat.models
+    apps.chat.views
+    apps.chat.consumers
+    apps.notifications.models
+    apps.notifications.views
+    apps.notifications.listeners
+    apps.groups.models
+    apps.groups.views
+allow_indirect_imports = True
