@@ -323,7 +323,7 @@ function Conversation({ id }) {
                 {m.content && (
                   <p
                     className={clsx(
-                      'whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-[15px]',
+                      'whitespace-pre-wrap break-all rounded-2xl px-3.5 py-2 text-[15px] max-h-[60vh] overflow-y-auto',
                       mine ? 'bg-ink text-white' : 'bg-white text-text shadow-card',
                     )}
                     title={clockTime(m.created_at)}
