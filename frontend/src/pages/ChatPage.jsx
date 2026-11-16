@@ -71,8 +71,8 @@ function ConversationList({ activeId }) {
   const online = useRealtime((s) => s.online);
   const convs = useQuery({ queryKey: ['conversations'], queryFn: chatApi.conversations });
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b border-line px-4 py-3">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-3">
         <h1 className="text-lg font-bold">Tin nhắn</h1>
         <button
           className="rounded-full bg-ink-50 p-2 text-ink hover:bg-ink-100"
@@ -83,7 +83,7 @@ function ConversationList({ activeId }) {
         </button>
       </div>
       {convs.isLoading && <PageLoader />}
-      <ul className="flex-1 overflow-y-auto">
+      <ul className="flex-1 min-h-0 overflow-y-auto">
         {(convs.data || []).map((c) => {
           const other = c.members.find((m) => m.id !== myId);
           const isOnline =
@@ -158,6 +158,7 @@ function Conversation({ id }) {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef(null);
   const bottomRef = useRef(null);
+  const listRef = useRef(null);
   const typingSent = useRef(0);
 
   const conv = useQuery({
@@ -171,10 +172,13 @@ function Conversation({ id }) {
 
   useEffect(() => {
     if (!lastId) return;
-    bottomRef.current?.scrollIntoView({ block: 'end' });
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    } else {
+      bottomRef.current?.scrollIntoView({ block: 'nearest' });
+    }
     if (!send({ type: 'read', conversation_id: id })) chatApi.read(id).catch(() => {});
-    qc.invalidateQueries({ queryKey: ['conversations'] });
-  }, [lastId, id, send, qc]);
+  }, [lastId, id, send]);
 
   const pushLocal = (msg) =>
     qc.setQueryData(['messages', id], (old) => {
@@ -256,8 +260,8 @@ function Conversation({ id }) {
   const nameOf = (uid) => c?.members.find((m) => m.id === uid);
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-center gap-3 border-b border-line px-4 py-3">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      <header className="flex shrink-0 items-center gap-3 border-b border-line px-4 py-3">
         <Link to="/chat" className="rounded-full p-1 hover:bg-paper md:hidden" aria-label="Quay lại">
           <ArrowLeft className="h-5 w-5" />
         </Link>
@@ -289,7 +293,7 @@ function Conversation({ id }) {
         )}
       </header>
 
-      <div className="flex-1 space-y-1 overflow-y-auto bg-paper px-4 py-4">
+      <div ref={listRef} className="flex-1 min-h-0 space-y-1 overflow-y-auto bg-paper px-4 py-4">
         {msgs.hasNextPage && (
           <div className="flex justify-center pb-2">
             <button
@@ -323,7 +327,7 @@ function Conversation({ id }) {
                 {m.content && (
                   <p
                     className={clsx(
-                      'whitespace-pre-wrap break-all rounded-2xl px-3.5 py-2 text-[15px] max-h-[60vh] overflow-y-auto',
+                      'whitespace-pre-wrap break-words [overflow-wrap:anywhere] rounded-2xl px-3.5 py-2 text-[15px]',
                       mine ? 'bg-ink text-white' : 'bg-white text-text shadow-card',
                     )}
                     title={clockTime(m.created_at)}
@@ -348,7 +352,7 @@ function Conversation({ id }) {
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={submit} className="flex items-center gap-2 border-t border-line bg-white p-3">
+      <form onSubmit={submit} className="flex shrink-0 items-center gap-2 border-t border-line bg-white p-3">
         <input
           ref={fileRef}
           type="file"
@@ -392,10 +396,10 @@ export default function ChatPage() {
   const { conversationId } = useParams();
   return (
     <div className="card grid h-[calc(100vh-140px)] overflow-hidden md:grid-cols-[300px_1fr] lg:h-[calc(100vh-100px)]">
-      <aside className={clsx('border-r border-line', conversationId && 'hidden md:block')}>
+      <aside className={clsx('border-r border-line h-full min-h-0 overflow-hidden', conversationId && 'hidden md:block')}>
         <ConversationList activeId={conversationId} />
       </aside>
-      <section className={clsx('min-w-0', !conversationId && 'hidden md:block')}>
+      <section className={clsx('min-w-0 h-full min-h-0 flex flex-col overflow-hidden', !conversationId && 'hidden md:block')}>
         {conversationId ? (
           <Conversation key={conversationId} id={conversationId} />
         ) : (
