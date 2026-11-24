@@ -1,0 +1,23 @@
+# Thư viện chạy production (ghim phiên bản để 5 thành viên dùng giống nhau)
+Django==5.1.15
+djangorestframework==3.17.2
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+drf-spectacular==0.30.0
+channels==4.3.2
+channels-redis==4.3.0
+daphne==4.2.3
+celery==5.7.0
+redis==8.1.0
+PyMySQL==1.2.3
+cryptography==50.0.2
+uuid6==2025.0.1
+argon2-cffi==25.1.0
+Pillow==13.0.0
+boto3==1.43.126
+bleach==6.4.0
+Unidecode==1.4.0
+requests==2.34.2
+sentry-sdk[django,celery]==2.74.0
+python-json-logger==4.2.0
+python-dotenv==1.2.4
